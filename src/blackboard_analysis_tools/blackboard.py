@@ -27,8 +27,6 @@ logger = 0
 """Global variables
 TODO: make them local
 """
-SCRIPTPATH = os.getcwd()
-FILESPATH =  SCRIPTPATH + "/examples"
 SEARCH_STRING = "Bestandsnaam:"
 LOGFILE = "blackboard_analysis_tools.log"
 
@@ -38,6 +36,9 @@ class Blackboard_analysis_tools:
     txt_files_list = []
     email_list = []
     name_detection_string = "Naam:"
+    script_path = os.getcwd()
+    input_path = script_path + "/input"
+    output_path = script_path + "/output"
     
     def init(self):
         self.set_logfile()
@@ -52,7 +53,7 @@ class Blackboard_analysis_tools:
         """ Run all the tests """
         self.txt_analyser()
         self.create_student_folders()
-        self.move_student_files()
+        #self.move_student_files()
         #self.check_folder_list(self.zip_files_list)
     
     def write_statistics(self):
@@ -62,12 +63,12 @@ class Blackboard_analysis_tools:
         
     def create_student_folders(self):
         for student in self.email_list:
-            if not os.path.exists(student):
+            if not os.path.exists(self.output_path + student):
                 os.makedirs(student)
                 
     def move_student_files(self):
-        for file in os.listdir(FILESPATH):
-            if os.path.isfile(os.path.join(FILESPATH, file)):
+        for file in os.listdir(INPUTPATH):
+            if os.path.isfile(os.path.join(INPUTPATH, file)):
                 if file.endswith(".zip"):
                     self.move_files(file)
                 if file.endswith(".rar"):
@@ -95,7 +96,7 @@ class Blackboard_analysis_tools:
             if student in file:
                 if os.path.exists(student):
                     #print(file)
-                    shutil.copy2(file, student)
+                    shutil.copy2(file, OUTPUTPATH + student)
                     #os.remove(file)
         
     def set_logfile(self):
@@ -119,12 +120,12 @@ class Blackboard_analysis_tools:
     def generate_zip_files_list(self):
         """ Generate the list with the zip files """
         try:
-            os.chdir(FILESPATH)
+            os.chdir(self.input_path)
         except OSError:
             print("Error: unable to open the folder where the assignment files are located")
             print("This should never happen...")
-        for file in os.listdir(FILESPATH):
-            if os.path.isfile(os.path.join(FILESPATH, file)):
+        for file in os.listdir(self.input_path):
+            if os.path.isfile(os.path.join(self.input_path, file)):
                 if file.endswith(".zip"):
                     self.zip_files_list.append(file)
 
@@ -136,17 +137,17 @@ class Blackboard_analysis_tools:
             counter += 1
             with zipfile.ZipFile(current_file, 'r') as myzip:
                 #print(current_file, end=", ")
-                myzip.extractall()
+                myzip.extractall(self.output_path)
         print(counter)
                 
     def generate_txt_files_list(self):
         """ Generate the list with the txt files """
         try:
-            os.chdir(FILESPATH)
+            os.chdir(self.output_path)
         except OSError:
             print("Error: unable to open the folder where the assignment files are located")
             print("This should never happen...")
-        for file in os.listdir(FILESPATH):
+        for file in os.listdir(self.output_path):
             if file.endswith(".txt"):
                 #print(file, end=", ")
                 self.txt_files_list.append(file)
