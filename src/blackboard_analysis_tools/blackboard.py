@@ -53,8 +53,8 @@ class Blackboard_analysis_tools:
         """ Run all the tests """
         self.txt_analyser()
         self.create_student_folders()
-        #self.move_student_files()
-        #self.check_folder_list(self.zip_files_list)
+        self.move_student_files()
+        self.process_badly_named_files()
     
     def write_statistics(self):
         """ Write statistics to files """
@@ -64,11 +64,11 @@ class Blackboard_analysis_tools:
     def create_student_folders(self):
         for student in self.email_list:
             if not os.path.exists(self.output_path + student):
-                os.makedirs(student)
+                os.makedirs(self.output_path + student)
                 
     def move_student_files(self):
-        for file in os.listdir(INPUTPATH):
-            if os.path.isfile(os.path.join(INPUTPATH, file)):
+        for file in os.listdir(self.output_path):
+            if os.path.isfile(os.path.join(self.output_path, file)):
                 if file.endswith(".zip"):
                     self.move_files(file)
                 if file.endswith(".rar"):
@@ -80,6 +80,14 @@ class Blackboard_analysis_tools:
                 if file.endswith(".docx"):
                     self.move_files(file)
                 if file.endswith(".doc"):
+                    self.move_files(file)
+                if file.endswith(".7z"):
+                    self.move_files(file)
+                if file.endswith(".tar.gz"):
+                    self.move_files(file)
+                if file.endswith(".tar.bz"):
+                    self.move_files(file)
+                if file.endswith(".tar.bz2"):
                     self.move_files(file)
                 #types = ('*.*')
                 ##types = ('*.rar', '*.zip', '*.pdf', '*.doc', '*.docx', '*.cs')
@@ -171,27 +179,36 @@ class Blackboard_analysis_tools:
     #def grab_email(files = []):
        
 
-    def check_folder_list(self, files_list):
-        """ Check a list with folders """
-        for index, current_file in enumerate(files_list):
-            print(current_file, end="")
-            print(": ", end="")
-            status = self.check(current_file, SEARCH_STRING)
-            print(status)
+    #def check_folder_list(self, files_list):
+        #""" Check a list with folders """
+        #for index, current_file in enumerate(files_list):
+            #print(current_file, end="")
+            #print(": ", end="")
+            #status = self.check(current_file, SEARCH_STRING)
+            #print(status)
         
     def check_filename(self):
         pass
+    
+    def process_badly_named_files(self):
+        """
+        Scan for bad filenames (where student mail is not in the filename)
+        Copy these files to 'studentname' folder anyway
+        Add logging to provide some feedback
+        """
+        pass
+    
         
-    def check(self, datafile, string):
-        """ Check if a 'datafile' contains a 'sting' """
-        found = False
-        #print(datafile)
-        with open(datafile, 'r') as inF:
-            for line in inF:
-                #print(line)
-                if string in line:
-                    found = True
-        return found
+    #def check(self, datafile, string):
+        #""" Check if a 'datafile' contains a 'sting' """
+        #found = False
+        ##print(datafile)
+        #with open(datafile, 'r') as inF:
+            #for line in inF:
+                ##print(line)
+                #if string in line:
+                    #found = True
+        #return found
 
     def write_report(self, folderlist):
         """ Write a report: based on the complete folderlist """
