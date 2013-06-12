@@ -14,7 +14,7 @@ Usage:
 Installation:
 -------------
  * Download the source and run ``python setup.py install``.
- * Python Package available in the Python Package Index at: (coming soon).
+ * Python Package available in the Python Package Index at: http://pypi.python.org/pypi/blackboard_analysis_tools/.
  * Install using pip: ``pip install blackboard_analysis_tools``.
 
 Limitations:
