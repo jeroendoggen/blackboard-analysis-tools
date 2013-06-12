@@ -9,13 +9,13 @@
 
 import sys
 
-from blackboard_analysis_tools.blackboard import Blackboard_analysis_tools
+from blackboard_analysis_tools.blackboard import BlackboardAnalysisTools
 
 
 def run():
     """Run the main program"""
-    assignment_analyser = Blackboard_analysis_tools()
-    assignment_analyser.init()
+    assignment_analyser = BlackboardAnalysisTools()
+    #assignment_analyser.init()
     assignment_analyser.run()
     return(assignment_analyser.exit_value())
 
