@@ -4,11 +4,8 @@
     Copyright 2013, Jeroen Doggen, jeroendoggen@gmail.com
 """
 
-# TODO: step 1: generate folder for each assignments
-# TODO: step 2: generate folder for each student (by processing the results after step 1)
 # TODO: report all students that hand in the assignment after the deadline
-# TODO: list of the students who are not following the 'file naming' guidlines
-# TODO: 
+# TODO: ...
 
 
 from __future__ import print_function, division  # We require Python 2.6+
@@ -21,13 +18,6 @@ import shutil
 import glob
 from email.utils import parseaddr
 
-logger = 0
-
-
-"""Global variables
-TODO: make them local
-"""
-LOGFILE = "blackboard_analysis_tools.log"
 
 class Blackboard_analysis_tools:
     errors = 0
@@ -36,14 +26,23 @@ class Blackboard_analysis_tools:
     email_list = []
     name_detection_string = "Naam:"
     filename_detection_string = "Bestandsnaam:"
+    assignmentname_detection_string = "Opdracht:"
     filename_analysis_string = "@student.artesis.be"
     script_path = os.getcwd()
     input_path = script_path + "/input/"
     output_path = script_path + "/output/"
+    logfile = "blackboard_analysis_tools.log"
+    logger = 0
+    student_counter = 0
+    bad_filenames_counter = 0
+    assignment_counter = 0
+    bad_filenames = ""
+    studentlist_filename = "studentlist_temp.txt"
+    studentlist_filename_final = "studentlist.txt"
     
     def init(self):
         self.set_logfile()
-        logger.info("Starting analysis tool")
+        self.logger.info("Starting analysis tool")
         self.generate_lists()
         
     def run(self):
@@ -60,7 +59,7 @@ class Blackboard_analysis_tools:
     def write_statistics(self):
         """ Write statistics to files """
         self.write_student_list()
-        #self.write_report()
+        self.write_summary()
         
     def create_student_folders(self):
         for student in self.email_list:
@@ -70,6 +69,7 @@ class Blackboard_analysis_tools:
     def move_student_files(self):
         for file in os.listdir(self.output_path):
             if os.path.isfile(os.path.join(self.output_path, file)):
+                # TODO: use a list for this?
                 if file.endswith(".zip"):
                     self.move_files(file)
                 if file.endswith(".rar"):
@@ -90,16 +90,7 @@ class Blackboard_analysis_tools:
                     self.move_files(file)
                 if file.endswith(".tar.bz2"):
                     self.move_files(file)
-                #types = ('*.*')
-                ##types = ('*.rar', '*.zip', '*.pdf', '*.doc', '*.docx', '*.cs')
-                #files_grabbed = []
-                #for files in types:
-                    #files_grabbed.extend(glob.glob(files))
-                #for filename in files_grabbed:
-                    #if os.path.isfile(filename):
-                        #print(filename)
-                        #os.remove(filename)
-    
+
     def move_files(self, file):
         for student in self.email_list:
             if student in file:
@@ -112,10 +103,10 @@ class Blackboard_analysis_tools:
         """Set the LOGFILE where we will write error & info messages"""
         try:
             global logger
-            logging.basicConfig(filename=LOGFILE,
+            logging.basicConfig(filename=self.logfile,
                 level=logging.DEBUG,
                 format="%(asctime)s %(name)s %(levelname)s %(message)s")
-            logger = logging.getLogger(__name__)
+            self.logger = logging.getLogger(__name__)
         except IOError:
             print("Unable to open LOGFILE")
             print("Do you have write access in the current folder?")
@@ -137,6 +128,7 @@ class Blackboard_analysis_tools:
             if os.path.isfile(os.path.join(self.input_path, file)):
                 if file.endswith(".zip"):
                     self.zip_files_list.append(file)
+                    self.assignment_counter += 1
 
     def unzipper(self):
         """ Check a list with folders """
@@ -166,6 +158,17 @@ class Blackboard_analysis_tools:
     def txt_analyser(self):
         for txtfile in self.txt_files_list:
             self.get_studentname(txtfile)
+            
+    def remove_duplicate_students(self):
+        """ TODO: implement this """
+        lines_seen = set() # holds lines already seen
+        outfile = open(self.studentlist_filename_final, "w+")
+        for line in open(self.studentlist_filename, "r+"):
+            if line not in lines_seen: # not a duplicate
+                outfile.write(line)
+                lines_seen.add(line)
+                self.student_counter += 1
+        outfile.close()
         
     def get_studentname(self, txtfile):
         with open(txtfile, 'r') as inF:
@@ -182,13 +185,33 @@ class Blackboard_analysis_tools:
                 if self.filename_detection_string in line:
                     if line.find(self.filename_analysis_string)==-1:  # detect bad bad filename (not containing student email)
                         return(line)
+                        
+    def get_assignment(self, txtfile):
+        with open(txtfile, 'r') as inF:
+            for line in inF:
+                if self.assignmentname_detection_string in line:
+                    line = line.lstrip(self.assignmentname_detection_string)
+                    #line = line.rstrip("NM\n")
+                    return(line)
    
     def write_student_list(self):
-        f = open('studentlist.txt', 'w+')
+        f = open(self.studentlist_filename, 'w+')
         for email in self.email_list:
             f.write(email + "\n")
-    #def grab_email(files = []):
-       
+        self.remove_duplicate_students()
+            
+    def write_summary(self):
+        f = open('summary.txt', 'w+')
+        f.write("Build summary:\n")
+        f.write("--------------\n")
+        f.write(" Total students: ")
+        f.write(str(self.student_counter))
+        f.write("\n Total assignments: ")
+        f.write(str(self.assignment_counter))
+        f.write("\n Bad filesnames: \n")
+        self.bad_filenames.sort()
+        f.write(str(self.bad_filenames))
+        
 
     #def check_folder_list(self, files_list):
         #""" Check a list with folders """
@@ -211,14 +234,18 @@ class Blackboard_analysis_tools:
             studentname = self.get_studentname(txtfile)
             filename = self.get_filename(txtfile)
             if filename is not None:
-                print(studentname, end=": ")
+                assignment = self.get_assignment(txtfile)
+                self.bad_filenames_counter += 1
+                self.bad_filenames += " - " + str(studentname) + ": "
+                #print(studentname, end=": ")
                 filename = filename.lstrip('\t')
                 filename = filename.lstrip(self.filename_detection_string)
                 filename = filename.lstrip(" ")
                 filename = filename.rstrip()
-                print(filename)
+                self.bad_filenames += str(filename) + " --> in assignment: " + assignment
                 shutil.copy2(filename, self.output_path + studentname)          
   
+    
     #def check(self, datafile, string):
         #""" Check if a 'datafile' contains a 'sting' """
         #found = False
@@ -230,7 +257,7 @@ class Blackboard_analysis_tools:
                     #found = True
         #return found
 
-    def write_report(self, folderlist):
+    def write_report(self):
         """ Write a report: based on the complete folderlist """
         pass
     

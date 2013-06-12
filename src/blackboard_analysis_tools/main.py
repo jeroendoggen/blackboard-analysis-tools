@@ -5,11 +5,6 @@
 
     This file is needed to import the module properly
 
-# TODO: step 1: generate folder for each assignments
-# TODO: step 2: generate folder for each student (by processing the results after step 1)
-# TODO: report all students that hand in the assignment after the deadline
-# TODO: list of the students who are not following the 'file naming' guidlines
-# TODO: 
 """
 
 import sys
