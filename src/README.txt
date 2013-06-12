@@ -1,24 +1,26 @@
-blackboard_analysis_tool
+Blackboard Analysis Tool
 ========================
-todo: write info
 
-Installation:
--------------
- * Install the Debian package: ``sudo dpkg -i python-blackboard-analysis-tools_0.x.x-x_all.deb`` 
- * Download the source and run ``sudo python setup.py install``
+An analysis automation tool to avoid repetitive task while grading student assignments that have been handed in using the Blackboard learning system.
 
 Usage:
 ------
- * Start the program with: ``python -m blackboard_analysis_tools``
- 
+ * Download assignment files from Blackboard (e.g. gradebook_ART_EA-38302_Assignment1_2013-06-11-20-50-44.zip).
+ * Place these .zip files in the "input" folder.
+ * Run the program: ``python -m blackboard_analysis_tools``.
+ * Wait... (about 10 seconds when processing around 100MB of assignments) (time will vary).
+ * Open the "output" folder to see the results (all files sorted per student, a summary, logfile, ...).
 
-Requirements:
+Installation:
 -------------
- * Python 2.6+
+ * Download the source and run ``python setup.py install``.
+ * Python Package available in the Python Package Index at: (coming soon).
+ * Install using pip: ``pip install blackboard_analysis_tools``.
 
 Limitations:
 ------------
- * probably still lots of bugs
+ * Currently only tested on Linux.
+ * The program was created with other OS users in mind, so it will eventually get full cross-platform support.
 
 License:
 --------
@@ -28,18 +30,28 @@ See COPYING in the distribution for details.
 Bug reports:
 ------------
  * Jeroen Doggen <jeroendoggen@gmail.com>
+ * Post issues to GitHub http://github.com/jeroendoggen/blackboard-analysis-tools/issues.
 
-Roadmap:
---------
-
-0.2: cleanup code
+What's happening behind the scenes:
+-----------------------------------
+ * Scan for .zip files
+ * Extract the .zip files
+ * Scan for .txt files (these contain the metadata that describes the student reports/assignments)
+ * Analyse the .txt files
+ * Create a folder for each student
+ * Move all the files to the correct folder (including the filenames that have been 'mangled' by Blackboard)
+ * Write some statistics: a list of all students that have handed something in
+ * Write a summary of the process: number of students, number of assignments, number of 'mangled' files,...
 
 Changelog:
 ----------
- 
-0.0.1: Initial version: 
- * Process zip file
- * Read email from .txt file
- * Print out student list
- * Create folders for each student
- * Move files to student folder
+0.0.2:
+ * Detect 'mangled' files
+ * Statistics: logfile, summary, student list
+ * using input & output folders
+ * Code cleanup: pep8, pylint
+
+0.0.1: Basic features
+ * Extract .zip files
+ * Create student folders
+ * Move files to folder
