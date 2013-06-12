@@ -27,7 +27,6 @@ logger = 0
 """Global variables
 TODO: make them local
 """
-SEARCH_STRING = "Bestandsnaam:"
 LOGFILE = "blackboard_analysis_tools.log"
 
 class Blackboard_analysis_tools:
@@ -36,9 +35,11 @@ class Blackboard_analysis_tools:
     txt_files_list = []
     email_list = []
     name_detection_string = "Naam:"
+    filename_detection_string = "Bestandsnaam:"
+    filename_analysis_string = "@student.artesis.be"
     script_path = os.getcwd()
-    input_path = script_path + "/input"
-    output_path = script_path + "/output"
+    input_path = script_path + "/input/"
+    output_path = script_path + "/output/"
     
     def init(self):
         self.set_logfile()
@@ -63,8 +64,8 @@ class Blackboard_analysis_tools:
         
     def create_student_folders(self):
         for student in self.email_list:
-            if not os.path.exists(self.output_path + student):
-                os.makedirs(self.output_path + student)
+            if not os.path.exists(self.output_path  + student):
+                 os.makedirs(self.output_path + student)
                 
     def move_student_files(self):
         for file in os.listdir(self.output_path):
@@ -104,7 +105,7 @@ class Blackboard_analysis_tools:
             if student in file:
                 if os.path.exists(student):
                     #print(file)
-                    shutil.copy2(file, OUTPUTPATH + student)
+                    shutil.copy2(file, self.output_path + student)
                     #os.remove(file)
         
     def set_logfile(self):
@@ -170,7 +171,17 @@ class Blackboard_analysis_tools:
         with open(txtfile, 'r') as inF:
             for line in inF:
                 if self.name_detection_string in line:
-                    self.email_list.append(parseaddr(line)[0]) # get email
+                    email = parseaddr(line)[0]
+                    self.email_list.append(email) # put email in the list
+                    return(email)
+              
+                    
+    def get_filename(self, txtfile):
+        with open(txtfile, 'r') as inF:
+            for line in inF:
+                if self.filename_detection_string in line:
+                    if line.find(self.filename_analysis_string)==-1:  # detect bad bad filename (not containing student email)
+                        return(line)
    
     def write_student_list(self):
         f = open('studentlist.txt', 'w+')
@@ -196,9 +207,18 @@ class Blackboard_analysis_tools:
         Copy these files to 'studentname' folder anyway
         Add logging to provide some feedback
         """
-        pass
-    
-        
+        for txtfile in self.txt_files_list:
+            studentname = self.get_studentname(txtfile)
+            filename = self.get_filename(txtfile)
+            if filename is not None:
+                print(studentname, end=": ")
+                filename = filename.lstrip('\t')
+                filename = filename.lstrip(self.filename_detection_string)
+                filename = filename.lstrip(" ")
+                filename = filename.rstrip()
+                print(filename)
+                shutil.copy2(filename, self.output_path + studentname)          
+  
     #def check(self, datafile, string):
         #""" Check if a 'datafile' contains a 'sting' """
         #found = False
