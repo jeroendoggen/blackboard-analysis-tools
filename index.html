@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Blackboard Analysis Tool : An analysis automation tool to avoid repetitive task while grading student assignments that have been handed in using the Blackboard learning system." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Blackboard Analysis Tool</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/jeroendoggen/blackboard-analysis-tools">View on GitHub</a>
+
+          <h1 id="project_title">Blackboard Analysis Tool</h1>
+          <h2 id="project_tagline">An analysis automation tool to avoid repetitive task while grading student assignments that have been handed in using the Blackboard learning system.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/jeroendoggen/blackboard-analysis-tools/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/jeroendoggen/blackboard-analysis-tools/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>An analysis automation tool to avoid repetitive task while grading student assignments that have been handed in using the Blackboard learning system.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage:</h2>
+
+<ul>
+<li>Download assignment files from Blackboard (e.g. gradebook_ART_EA-38302_Assignment1_2013-06-11-20-50-44.zip).</li>
+<li>Place these .zip files in the "input" folder.</li>
+<li>Run the program: <code>python -m blackboard_analysis_tools</code>.</li>
+<li>Wait... (about 10 seconds when processing around 100MB of assignments) (time will vary).</li>
+<li>Open the "output" folder to see the results (all files sorted per student, a summary, logfile, ...).</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation:</h2>
+
+<ul>
+<li>Download the source and run <code>python setup.py install</code>.</li>
+<li>Python Package available in the Python Package Index at: (coming soon).</li>
+<li>Install using pip: <code>pip install blackboard_analysis_tools</code>.</li>
+</ul><h2>
+<a name="limitations" class="anchor" href="#limitations"><span class="octicon octicon-link"></span></a>Limitations:</h2>
+
+<ul>
+<li>Currently only tested on Linux.</li>
+<li>The program was created with other OS users in mind, so it will eventually get full cross-platform support.</li>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License:</h2>
+
+<p>If not stated otherwise blackboard_analysis_tools is distributed in terms of the GPLv2 software license.
+See COPYING in the distribution for details.</p>
+
+<h2>
+<a name="bug-reports" class="anchor" href="#bug-reports"><span class="octicon octicon-link"></span></a>Bug reports:</h2>
+
+<ul>
+<li>Jeroen Doggen <a href="mailto:jeroendoggen@gmail.com">jeroendoggen@gmail.com</a>
+</li>
+<li>Post issues to GitHub <a href="http://github.com/jeroendoggen/blackboard-analysis-tools/issues">http://github.com/jeroendoggen/blackboard-analysis-tools/issues</a>.</li>
+</ul><h2>
+<a name="whats-happening-behind-the-scenes" class="anchor" href="#whats-happening-behind-the-scenes"><span class="octicon octicon-link"></span></a>What's happening behind the scenes:</h2>
+
+<ul>
+<li>Scan for .zip files</li>
+<li>Extract the .zip files</li>
+<li>Scan for .txt files (these contain the metadata that describes the student reports/assignments)</li>
+<li>Analyse the .txt files</li>
+<li>Create a folder for each student</li>
+<li>Move all the files to the correct folder (including the filenames that have been 'mangled' by Blackboard)</li>
+<li>Write some statistics: a list of all students that have handed something in</li>
+<li>Write a summary of the process: number of students, number of assignments, number of 'mangled' files,...</li>
+</ul><h2>
+<a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog:</h2>
+
+<p>0.0.2:</p>
+
+<ul>
+<li>Detect 'mangled' files</li>
+<li>Statistics: logfile, summary, student list</li>
+<li>using input &amp; output folders</li>
+<li>Code cleanup: pep8, pylint</li>
+</ul><p>0.0.1: Basic features</p>
+
+<ul>
+<li>Extract .zip files</li>
+<li>Create student folders</li>
+<li>Move files to folder</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Blackboard Analysis Tool maintained by <a href="https://github.com/jeroendoggen">jeroendoggen</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
