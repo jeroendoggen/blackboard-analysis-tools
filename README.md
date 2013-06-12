@@ -1,7 +1,7 @@
-Blackboard Analysis Tools
-=========================
+Blackboard Analysis Tool
+========================
 
-Some tools to automate the analysis of student assignments that have been handed in using the Blackboard learning system.
+An analysis automation tool to avoid repetitive task while grading student assignments that have been handed in using the Blackboard learning system.
 
 Usage:
 ------
