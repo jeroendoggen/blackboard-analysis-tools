@@ -16,6 +16,9 @@ import zipfile
 import shutil
 import sys
 import datetime
+import Queue
+import time
+from multiprocessing import Process
 
 from email.utils import parseaddr
 
@@ -52,7 +55,6 @@ class BlackboardAnalysisTools:
         self.logger.info("Starting 'analysis tool': ")
         #self.timedebug("Logger: ")
         self.generate_lists()
-        self.timedebug("Generate_lists (+unzip): ")
         self.txt_analyser()
         self.timedebug("Txt_analyser: ")
 
@@ -74,7 +76,9 @@ class BlackboardAnalysisTools:
         self.create_student_folders()
         self.timedebug("Create student folders: ")
         self.move_student_files()
-        self.timedebug("Move student files: ")
+        self.timedebug("Move student files: (single) ")
+        #self.move_student_files_parallel()
+        #self.timedebug("Move student files: (multi) ")
         self.process_badly_named_files()
         self.timedebug("Process bad names: ")
 
@@ -112,31 +116,36 @@ class BlackboardAnalysisTools:
                 os.makedirs(self.output_path + student)
 
     def move_student_files(self):
-        """ Move assignment files to student folders """
+        """ Move assignment files to student folders (using one process)"""
         for inputfile in os.listdir(self.output_path):
             if os.path.isfile(os.path.join(self.output_path, inputfile)):
                 # TODO: use a list for this?
                 self.move_files(inputfile)
-                #if inputfile.endswith(".zip"):
-                    #self.move_files(inputfile)
-                #if inputfile.endswith(".rar"):
-                    #self.move_files(inputfile)
-                #if inputfile.endswith(".pdf"):
-                    #self.move_files(inputfile)
-                #if inputfile.endswith(".txt"):
-                    #self.move_files(inputfile)
-                #if inputfile.endswith(".docx"):
-                    #self.move_files(inputfile)
-                #if inputfile.endswith(".doc"):
-                    #self.move_files(inputfile)
-                #if inputfile.endswith(".7z"):
-                    #self.move_files(inputfile)
-                #if inputfile.endswith(".tar.gz"):
-                    #self.move_files(inputfile)
-                #if inputfile.endswith(".tar.bz"):
-                    #self.move_files(inputfile)
-                #if inputfile.endswith(".tar.bz2"):
-                    #self.move_files(inputfile)
+
+    def move_student_files_parallel(self):
+        """ Move assignment files to student folders (using multiple processes in parallel) """
+        q = Queue.Queue()
+        for inputfile in os.listdir(self.output_path):
+            if os.path.isfile(os.path.join(self.output_path, inputfile)):
+                #print("Moving: " + inputfile)
+                index = Process(target=self.move_files, args=(inputfile,))
+                index.start()
+                q.put(index)
+                time.sleep(0.1)
+                #index = Process(target=builder_task, args=(current_chapter,"_handout"))
+                #index.start()
+                #q.put(index) 
+
+            #Wait for all processes to finish and print a down counter
+        #print("")
+        #print("Remaining processes:")
+        total = q.qsize()
+        while (q.qsize() > 0):
+            top = q.get()
+            #print(q.qsize()+1, end="/")
+            #print(total)
+            while (top.is_alive()):
+                time.sleep(1)
 
     def move_files(self, inputfile):
         """ Move assignment file to the correct student folder """
@@ -162,6 +171,9 @@ class BlackboardAnalysisTools:
         """ Generate the needed lists: zip files, unzip, txt files """
         self.generate_zip_files_list()
         self.unzipper()
+        self.timedebug("Unzipper single: ")
+        #self.unzipper_parallel()
+        #self.timedebug("Unzipper parallel: ")
         self.generate_txt_files_list()
 
     def generate_zip_files_list(self):
@@ -183,12 +195,42 @@ class BlackboardAnalysisTools:
         counter = 0
         for index, current_file in enumerate(self.zip_files_list):
             shortname = str(counter) + ".zip"
-            os.rename(current_file, shortname)
-            with zipfile.ZipFile(shortname, 'r') as myzip:
-                 myzip.extractall(self.output_path)
-            os.rename(shortname, current_file)
+            self.unzip_onefile(current_file, shortname)
             counter += 1
         print(counter)
+
+    def unzip_onefile(self, current_file, shortname):
+        """ Unzip one file """
+        os.rename(current_file, shortname)
+        with zipfile.ZipFile(shortname, 'r') as myzip:
+            myzip.extractall(self.output_path)
+        os.rename(shortname, current_file)
+
+    def unzipper_parallel(self):
+        """ Unzip all the .zip assignment files """
+        """ Unzip all the .zip assignment files """
+        q = Queue.Queue()
+        print(".zip files: ", end="")
+        counter = 0
+        for index, current_file in enumerate(self.zip_files_list):
+            shortname = str(counter) + ".zip"
+            index = Process(target=self.unzip_onefile, args=(current_file, shortname,))
+            index.start()
+            q.put(index)
+            counter += 1
+            time.sleep(0.1)
+        print(counter)
+
+        ##Wait for all processes to finish and print a down counter
+        #print("")
+        #print("Remaining processes:")
+        total = q.qsize()
+        while (q.qsize() > 0):
+            top = q.get()
+            #print(q.qsize()+1, end="/")
+            #print(total)
+            while (top.is_alive()):
+                time.sleep(1)
 
     def generate_txt_files_list(self):
         """ Generate the list with the txt files """
