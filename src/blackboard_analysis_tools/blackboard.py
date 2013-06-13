@@ -40,6 +40,7 @@ class BlackboardAnalysisTools:
     bad_filenames = ""
     studentlist_filename_temp = "studentlist_all.txt"
     studentlist_filename_final = "studentlist_final.txt"
+    summary_file = 'summary.txt'
 
     def __init__(self):
         self.set_logfile()
@@ -51,6 +52,7 @@ class BlackboardAnalysisTools:
         """ Run the program (call this from main) """
         self.run_tests()
         self.write_statistics()
+        self.cleanup()
 
     def run_tests(self):
         """ Run all the tests """
@@ -62,6 +64,16 @@ class BlackboardAnalysisTools:
         self.create_student_folders()
         self.move_student_files()
         self.process_badly_named_files()
+
+    def cleanup(self):
+        """ Clean up the output folder by removing all 'temp files' """
+        for inputfile in os.listdir(self.output_path):
+            if os.path.isfile(os.path.join(self.output_path, inputfile)):
+                 if inputfile != self.studentlist_filename_final:
+                    if inputfile != self.logfile:
+                        if inputfile != self.summary_file:
+                            print(inputfile)
+                            os.remove(inputfile)
 
     def write_statistics(self):
         """ Write statistics to files """
@@ -79,26 +91,27 @@ class BlackboardAnalysisTools:
         for inputfile in os.listdir(self.output_path):
             if os.path.isfile(os.path.join(self.output_path, inputfile)):
                 # TODO: use a list for this?
-                if inputfile.endswith(".zip"):
-                    self.move_files(inputfile)
-                if inputfile.endswith(".rar"):
-                    self.move_files(inputfile)
-                if inputfile.endswith(".pdf"):
-                    self.move_files(inputfile)
-                if inputfile.endswith(".txt"):
-                    self.move_files(inputfile)
-                if inputfile.endswith(".docx"):
-                    self.move_files(inputfile)
-                if inputfile.endswith(".doc"):
-                    self.move_files(inputfile)
-                if inputfile.endswith(".7z"):
-                    self.move_files(inputfile)
-                if inputfile.endswith(".tar.gz"):
-                    self.move_files(inputfile)
-                if inputfile.endswith(".tar.bz"):
-                    self.move_files(inputfile)
-                if inputfile.endswith(".tar.bz2"):
-                    self.move_files(inputfile)
+                self.move_files(inputfile)
+                #if inputfile.endswith(".zip"):
+                    #self.move_files(inputfile)
+                #if inputfile.endswith(".rar"):
+                    #self.move_files(inputfile)
+                #if inputfile.endswith(".pdf"):
+                    #self.move_files(inputfile)
+                #if inputfile.endswith(".txt"):
+                    #self.move_files(inputfile)
+                #if inputfile.endswith(".docx"):
+                    #self.move_files(inputfile)
+                #if inputfile.endswith(".doc"):
+                    #self.move_files(inputfile)
+                #if inputfile.endswith(".7z"):
+                    #self.move_files(inputfile)
+                #if inputfile.endswith(".tar.gz"):
+                    #self.move_files(inputfile)
+                #if inputfile.endswith(".tar.bz"):
+                    #self.move_files(inputfile)
+                #if inputfile.endswith(".tar.bz2"):
+                    #self.move_files(inputfile)
 
     def move_files(self, inputfile):
         """ Move assignment file to the correct student folder """
@@ -220,7 +233,8 @@ class BlackboardAnalysisTools:
 
     def write_summary(self):
         """ Write a summary of the analysis process to a logfile """
-        outfile = open('summary.txt', 'w+')
+        os.chdir(self.output_path)
+        outfile = open(self.summary_file, 'w+')
         outfile.write("Build summary:\n")
         outfile.write("--------------\n")
         outfile.write(" Total students: ")
