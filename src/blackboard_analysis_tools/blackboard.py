@@ -15,6 +15,7 @@ import os
 import zipfile
 import shutil
 import sys
+import datetime
 
 from email.utils import parseaddr
 
@@ -41,18 +42,27 @@ class BlackboardAnalysisTools:
     studentlist_filename_temp = "studentlist_all.txt"
     studentlist_filename_final = "studentlist_final.txt"
     summary_file = 'summary.txt'
+    starttime = 0
+    lasttime = 0
 
     def __init__(self):
+        self.starttime = datetime.datetime.now()
+        self.lasttime = datetime.datetime.now()
         self.set_logfile()
-        self.logger.info("Starting analysis tool")
+        self.logger.info("Starting 'analysis tool': ")
+        #self.timedebug("Logger: ")
         self.generate_lists()
+        self.timedebug("Generate_lists (+unzip): ")
         self.txt_analyser()
+        self.timedebug("Txt_analyser: ")
 
     def run(self):
         """ Run the program (call this from main) """
         self.run_tests()
         self.write_statistics()
+        #self.timedebug("Statistics: ")
         self.cleanup()
+        self.timedebug("Cleanup: ")
 
     def run_tests(self):
         """ Run all the tests """
@@ -62,8 +72,21 @@ class BlackboardAnalysisTools:
             #print("Error: unable to open the output folder")
             #print("This should never happen...")
         self.create_student_folders()
+        self.timedebug("Create student folders: ")
         self.move_student_files()
+        self.timedebug("Move student files: ")
         self.process_badly_named_files()
+        self.timedebug("Process bad names: ")
+
+    def timedebug(self, message):
+        """Print the current runtime + a message to the terminal """
+        #TODO timing is off by one!
+        now = datetime.datetime.now()
+        print(message, end=" ")
+        delta = now - self.lasttime
+        delta = delta.total_seconds()
+        print("this took: " + str(delta) + " seconds")
+        self.lasttime = datetime.datetime.now()
 
     def cleanup(self):
         """ Clean up the output folder by removing all 'temp files' """
@@ -72,12 +95,14 @@ class BlackboardAnalysisTools:
                  if inputfile != self.studentlist_filename_final:
                     if inputfile != self.logfile:
                         if inputfile != self.summary_file:
-                            print(inputfile)
+                            #print(inputfile)
                             os.remove(inputfile)
 
     def write_statistics(self):
         """ Write statistics to files """
+        #self.timedebug("Write student list: ")
         self.write_student_list()
+        self.timedebug("Write summary: ")
         self.write_summary()
 
     def create_student_folders(self):
@@ -157,9 +182,12 @@ class BlackboardAnalysisTools:
         print(".zip files: ", end="")
         counter = 0
         for index, current_file in enumerate(self.zip_files_list):
+            shortname = str(counter) + ".zip"
+            os.rename(current_file, shortname)
+            with zipfile.ZipFile(shortname, 'r') as myzip:
+                 myzip.extractall(self.output_path)
+            os.rename(shortname, current_file)
             counter += 1
-            with zipfile.ZipFile(current_file, 'r') as myzip:
-                myzip.extractall(self.output_path)
         print(counter)
 
     def generate_txt_files_list(self):
