@@ -37,6 +37,7 @@ class BlackboardAnalysisTools:
     filename_detection_string = "Bestandsnaam:"
     assignmentname_detection_string = "Opdracht:"
     filename_analysis_string = "@student.artesis.be"
+    assignment_late_detection_string = "juni"
     script_path = os.getcwd()
     input_path = script_path + "/input/"
     output_path = script_path + "/output/"
@@ -45,6 +46,7 @@ class BlackboardAnalysisTools:
     student_counter = 0
     bad_filenames_counter = 0
     assignment_counter = 0
+    late_assignment_counter = 0
     files_counter = 0
     bad_filenames = ""
     studentlist_filename_temp = "studentlist_all.txt"
@@ -87,6 +89,7 @@ class BlackboardAnalysisTools:
         #self.timedebug("Move student files: (multi) ")
         self.process_badly_named_files()
         #self.timedebug("Process bad names: ")
+
 
     def timedebug(self, message):
         """Print the current runtime + a message to the terminal """
@@ -220,6 +223,7 @@ class BlackboardAnalysisTools:
         for index, current_file in enumerate(self.zip_files_list):
             counter += 1
         print(counter)
+        print("")
         for index, current_file in enumerate(self.zip_files_list):
             shortname = str(counter) + ".zip"
             self.unzip_onefile(current_file, shortname)
@@ -275,6 +279,7 @@ class BlackboardAnalysisTools:
         """ Analyse all the .txt files """
         for txtfile in self.txt_files_list:
             self.get_studentname(txtfile)
+            self.get_late_assignments(txtfile)
         self.email_list.sort()
 
     def remove_duplicate_students(self):
@@ -335,6 +340,19 @@ class BlackboardAnalysisTools:
                     #line = line.rstrip("NM\n")
                     return(line)
 
+    def get_late_assignments(self, txtfile):
+        """ Detect is an assignment is handed in late from a given .txt file """
+        with open(txtfile, 'r') as inputfile:
+            for line in inputfile:
+                if self.assignment_late_detection_string in line:
+                    self.late_assignment_counter += 1
+                    print("Late file: ", end="")
+                    print(inputfile.name)
+                    print(line)
+                    line = line.lstrip(self.assignmentname_detection_string)
+                    #line = line.rstrip("NM\n")
+                    return(line)
+
     def write_student_list(self):
         """ Write a list with the name of all students to a file """
         outfile = open(self.studentlist_filename_temp, 'w+')
@@ -356,12 +374,13 @@ class BlackboardAnalysisTools:
             outfile.write(str(self.assignment_counter))
             outfile.write("\n Total files: ")
             outfile.write(str(self.files_counter))
+            outfile.write("\n Late files: ")
+            outfile.write(str(self.late_assignment_counter))
             outfile.write("\n Bad filesnames: \n")
             outfile.write(str(self.bad_filenames))
             outfile.close()
             with open(self.summary_file) as f:
                 content = f.read()
-                print("")
                 print(content)
             outfile.close()
         except OSError:
