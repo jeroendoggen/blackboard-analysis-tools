@@ -98,13 +98,21 @@ class BlackboardAnalysisTools:
 
     def cleanup(self):
         """ Clean up the output folder by removing all 'temp files' """
-        for inputfile in os.listdir(self.output_path):
-            if os.path.isfile(os.path.join(self.output_path, inputfile)):
-                 if inputfile != self.studentlist_filename_final:
-                    if inputfile != self.logfile:
-                        if inputfile != self.summary_file:
-                            #print(inputfile)
-                            os.remove(inputfile)
+        try:
+            for inputfile in os.listdir(self.output_path):
+                if os.path.isfile(os.path.join(self.output_path, inputfile)):
+                    if inputfile != self.studentlist_filename_final:
+                        if inputfile != self.logfile:
+                            if inputfile != self.summary_file:
+                                #print(inputfile)
+                                os.remove(inputfile)
+        except OSError:
+            self.exit_program("cleaning up folders")
+
+    def exit_program(self, message):
+        print("Error while " + message)
+        print("Closing application")
+        sys.exit()
 
     def write_statistics(self):
         """ Write statistics to files """
@@ -121,10 +129,13 @@ class BlackboardAnalysisTools:
 
     def move_student_files(self):
         """ Move assignment files to student folders (using one process)"""
-        for inputfile in os.listdir(self.output_path):
-            if os.path.isfile(os.path.join(self.output_path, inputfile)):
-                # TODO: use a list for this?
-                self.move_files(inputfile)
+        try:
+            for inputfile in os.listdir(self.output_path):
+                if os.path.isfile(os.path.join(self.output_path, inputfile)):
+                    # TODO: use a list for this?
+                    self.move_files(inputfile)
+        except OSError:
+            self.exit_program("moving student files to output folder")
 
     def move_student_files_parallel(self):
         """ Move assignment files to student folders (using multiple processes in parallel) """
@@ -167,9 +178,7 @@ class BlackboardAnalysisTools:
                                 format="%(asctime)s %(name)s %(levelname)s %(message)s")
             self.logger = logging.getLogger(__name__)
         except IOError:
-            print("Unable to open LOGFILE")
-            print("Do you have write access in the current folder?")
-            sys.exit(0)
+            self.exit_program("opening the logfile (do you have write permission?)")
 
     def generate_lists(self):
         """ Generate the needed lists: zip files, unzip, txt files """
@@ -184,14 +193,13 @@ class BlackboardAnalysisTools:
         """ Generate the list with the zip files """
         try:
             os.chdir(self.input_path)
+            for inputfile in os.listdir(self.input_path):
+                if os.path.isfile(os.path.join(self.input_path, inputfile)):
+                    if inputfile.endswith(".zip"):
+                        self.zip_files_list.append(inputfile)
+                        self.assignment_counter += 1
         except OSError:
-            print("Error: unable to open the assignments folder")
-            print("This should never happen...")
-        for inputfile in os.listdir(self.input_path):
-            if os.path.isfile(os.path.join(self.input_path, inputfile)):
-                if inputfile.endswith(".zip"):
-                    self.zip_files_list.append(inputfile)
-                    self.assignment_counter += 1
+            self.exit_program("reading the .zip files (does the output folder exist?)")
 
     def unzipper(self):
         """ Unzip all the .zip assignment files """
@@ -240,12 +248,11 @@ class BlackboardAnalysisTools:
         """ Generate the list with the txt files """
         try:
             os.chdir(self.output_path)
+            for inputfile in os.listdir(self.output_path):
+                if inputfile.endswith(".txt"):
+                    self.txt_files_list.append(inputfile)
         except OSError:
-            print("Error: unable to open the assignments folder")
-            print("This should never happen...")
-        for inputfile in os.listdir(self.output_path):
-            if inputfile.endswith(".txt"):
-                self.txt_files_list.append(inputfile)
+            self.exit_program("reading the .txt files")
 
     def txt_analyser(self):
         """ Analyse all the .txt files """
@@ -307,16 +314,19 @@ class BlackboardAnalysisTools:
 
     def write_summary(self):
         """ Write a summary of the analysis process to a logfile """
-        os.chdir(self.output_path)
-        outfile = open(self.summary_file, 'w+')
-        outfile.write("Build summary:\n")
-        outfile.write("--------------\n")
-        outfile.write(" Total students: ")
-        outfile.write(str(self.student_counter))
-        outfile.write("\n Total assignments: ")
-        outfile.write(str(self.assignment_counter))
-        outfile.write("\n Bad filesnames: \n")
-        outfile.write(str(self.bad_filenames))
+        try:
+            os.chdir(self.output_path)
+            outfile = open(self.summary_file, 'w+')
+            outfile.write("Build summary:\n")
+            outfile.write("--------------\n")
+            outfile.write(" Total students: ")
+            outfile.write(str(self.student_counter))
+            outfile.write("\n Total assignments: ")
+            outfile.write(str(self.assignment_counter))
+            outfile.write("\n Bad filesnames: \n")
+            outfile.write(str(self.bad_filenames))
+        except OSError:
+            self.exit_program("writing the summary")
 
     def check_filename(self):
         """ Check the .zip file -or other files- using some pattern? """
