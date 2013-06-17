@@ -17,6 +17,7 @@ import shutil
 import sys
 import datetime
 import time
+import StringIO
 from multiprocessing import Process
 
 try:
@@ -25,7 +26,6 @@ except ImportError:
     from queue import Queue
 
 from email.utils import parseaddr
-
 
 class BlackboardAnalysisTools:
     """ Contains all the tools to analyse Blackboard assignments """
@@ -51,6 +51,7 @@ class BlackboardAnalysisTools:
     summary_file = 'summary.txt'
     starttime = 0
     lasttime = 0
+    email_domain_length = 23
 
     def __init__(self):
         self.starttime = datetime.datetime.now()
@@ -60,7 +61,7 @@ class BlackboardAnalysisTools:
         #self.timedebug("Logger: ")
         self.generate_lists()
         self.txt_analyser()
-        self.timedebug("Txt_analyser: ")
+        #self.timedebug("Txt_analyser: ")
 
     def run(self):
         """ Run the program (call this from main) """
@@ -68,7 +69,7 @@ class BlackboardAnalysisTools:
         self.write_statistics()
         #self.timedebug("Statistics: ")
         self.cleanup()
-        self.timedebug("Cleanup: ")
+        #self.timedebug("Cleanup: ")
 
     def run_tests(self):
         """ Run all the tests """
@@ -78,13 +79,13 @@ class BlackboardAnalysisTools:
             #print("Error: unable to open the output folder")
             #print("This should never happen...")
         self.create_student_folders()
-        self.timedebug("Create student folders: ")
+        #self.timedebug("Create student folders: ")
         self.move_student_files()
-        self.timedebug("Move student files: (single) ")
+        #self.timedebug("Move student files: (single) ")
         #self.move_student_files_parallel()
         #self.timedebug("Move student files: (multi) ")
         self.process_badly_named_files()
-        self.timedebug("Process bad names: ")
+        #self.timedebug("Process bad names: ")
 
     def timedebug(self, message):
         """Print the current runtime + a message to the terminal """
@@ -118,7 +119,7 @@ class BlackboardAnalysisTools:
         """ Write statistics to files """
         #self.timedebug("Write student list: ")
         self.write_student_list()
-        self.timedebug("Write summary: ")
+        #self.timedebug("Write summary: ")
         self.write_summary()
 
     def create_student_folders(self):
@@ -165,7 +166,10 @@ class BlackboardAnalysisTools:
     def move_files(self, inputfile):
         """ Move assignment file to the correct student folder """
         for student in self.email_list:
+            student = self.swap_string(student)
             if student in inputfile:
+                print(student)
+                student = self.swap_string(student)
                 if os.path.exists(student):
                     shutil.copy2(inputfile, self.output_path + student)
                     #os.remove(inputfile)
@@ -184,7 +188,7 @@ class BlackboardAnalysisTools:
         """ Generate the needed lists: zip files, unzip, txt files """
         self.generate_zip_files_list()
         self.unzipper()
-        self.timedebug("Unzipper single: ")
+        #self.timedebug("Unzipper single: ")
         #self.unzipper_parallel()
         #self.timedebug("Unzipper parallel: ")
         self.generate_txt_files_list()
@@ -214,8 +218,8 @@ class BlackboardAnalysisTools:
     def unzip_onefile(self, current_file, shortname):
         """ Unzip one file """
         os.rename(current_file, shortname)
-        with zipfile.ZipFile(shortname, 'r') as myzip:
-            myzip.extractall(self.output_path)
+        myzip = zipfile.ZipFile(shortname)
+        myzip.extractall(self.output_path)
         os.rename(shortname, current_file)
 
     def unzipper_parallel(self):
@@ -258,6 +262,7 @@ class BlackboardAnalysisTools:
         """ Analyse all the .txt files """
         for txtfile in self.txt_files_list:
             self.get_studentname(txtfile)
+        self.email_list.sort()
 
     def remove_duplicate_students(self):
         """ Remove duplicate students in the students_list """
@@ -271,16 +276,29 @@ class BlackboardAnalysisTools:
                 self.student_counter += 1
         outfile.close()
 
+
+    def swap_string(self, string):
+        """ Swap strings around '.' symbol (for email address processing)"""
+        string0 = string.split(".")[0]
+        string1 = string.split(".")[1]
+        string = string1 + "." + string0
+        return(string)
+    
+    
     def get_studentname(self, txtfile):
         """ Get the student name from a given txt file """
+        email = ""
         with open(txtfile, 'r') as inputfile:
             for line in inputfile:
                 if self.name_detection_string in line:
                     email = parseaddr(line)[0]
+                    #print(email)
+                    email = email[:-self.email_domain_length]
+                    email = self.swap_string(email)
+                    #print(email)
                     self.email_list.append(email)
-                    inputfile.close()
-                    return(email)
             inputfile.close()
+        return(email)
 
     def get_filename(self, txtfile):
         """ Get the assignment filename from a given txt file """
