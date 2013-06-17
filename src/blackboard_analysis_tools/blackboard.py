@@ -16,9 +16,13 @@ import zipfile
 import shutil
 import sys
 import datetime
-import Queue
 import time
 from multiprocessing import Process
+
+try:
+    from Queue import Queue
+except ImportError:
+    from queue import Queue
 
 from email.utils import parseaddr
 
