@@ -45,6 +45,16 @@ What's happening behind the scenes:
 
 Changelog:
 ----------
+0.0.3:
+ * Cleanup temp folders
+ * Debug code for timing analysis
+ * Parallel processing (no speedup)
+ * Python 3.3 compatible
+ * Partially Windows compatible
+ * Sorting output folders
+ * Print build summary
+ * Detect late files
+
 0.0.2:
  * Detect 'mangled' files
  * Statistics: logfile, summary, student list
