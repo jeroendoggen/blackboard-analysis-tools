@@ -45,6 +45,7 @@ class BlackboardAnalysisTools:
     student_counter = 0
     bad_filenames_counter = 0
     assignment_counter = 0
+    files_counter = 0
     bad_filenames = ""
     studentlist_filename_temp = "studentlist_all.txt"
     studentlist_filename_final = "studentlist_final.txt"
@@ -97,16 +98,24 @@ class BlackboardAnalysisTools:
         print("this took: " + str(delta) + " seconds")
         self.lasttime = datetime.datetime.now()
 
+
+    def is_not_analysistool_file(self, inputfile):
+        """ Detect is a file is a logfile, outputfile from this tool """
+        if inputfile != self.studentlist_filename_final:
+            if inputfile != self.logfile:
+                if inputfile != self.summary_file:
+                    return(True)
+        else:
+            return(False)      
+   
     def cleanup(self):
         """ Clean up the output folder by removing all 'temp files' """
         try:
             for inputfile in os.listdir(self.output_path):
                 if os.path.isfile(os.path.join(self.output_path, inputfile)):
-                    if inputfile != self.studentlist_filename_final:
-                        if inputfile != self.logfile:
-                            if inputfile != self.summary_file:
-                                #print(inputfile)
-                                os.remove(inputfile)
+                    if self.is_not_analysistool_file(inputfile):
+                        #print(inputfile)
+                        os.remove(inputfile)
         except OSError:
             self.exit_program("cleaning up folders")
 
@@ -168,7 +177,6 @@ class BlackboardAnalysisTools:
         for student in self.email_list:
             student = self.swap_string(student)
             if student in inputfile:
-                print(student)
                 student = self.swap_string(student)
                 if os.path.exists(student):
                     shutil.copy2(inputfile, self.output_path + student)
@@ -210,10 +218,12 @@ class BlackboardAnalysisTools:
         print(".zip files: ", end="")
         counter = 0
         for index, current_file in enumerate(self.zip_files_list):
-            shortname = str(counter) + ".zip"
-            self.unzip_onefile(current_file, shortname)
             counter += 1
         print(counter)
+        for index, current_file in enumerate(self.zip_files_list):
+            shortname = str(counter) + ".zip"
+            self.unzip_onefile(current_file, shortname)
+
 
     def unzip_onefile(self, current_file, shortname):
         """ Unzip one file """
@@ -253,8 +263,11 @@ class BlackboardAnalysisTools:
         try:
             os.chdir(self.output_path)
             for inputfile in os.listdir(self.output_path):
-                if inputfile.endswith(".txt"):
-                    self.txt_files_list.append(inputfile)
+                    if os.path.isfile(os.path.join(self.output_path, inputfile)):
+                        if self.is_not_analysistool_file(inputfile):
+                            self.files_counter += 1
+                            if inputfile.endswith(".txt"):
+                                self.txt_files_list.append(inputfile)
         except OSError:
             self.exit_program("reading the .txt files")
 
@@ -341,8 +354,16 @@ class BlackboardAnalysisTools:
             outfile.write(str(self.student_counter))
             outfile.write("\n Total assignments: ")
             outfile.write(str(self.assignment_counter))
+            outfile.write("\n Total files: ")
+            outfile.write(str(self.files_counter))
             outfile.write("\n Bad filesnames: \n")
             outfile.write(str(self.bad_filenames))
+            outfile.close()
+            with open(self.summary_file) as f:
+                content = f.read()
+                print("")
+                print(content)
+            outfile.close()
         except OSError:
             self.exit_program("writing the summary")
 
