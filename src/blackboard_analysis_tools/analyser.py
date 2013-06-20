@@ -108,3 +108,12 @@ class Analyser():
                         line = line.lstrip(" ")
                         line = line.rstrip()
                         return(line)
+
+    def get_assignment(self, txtfile):
+        """ Get the assignment name from a given .txt file """
+        with open(txtfile, 'r') as inputfile:
+            for line in inputfile:
+                if self.settings.assignmentname_detection_string in line:
+                    line = line.lstrip(self.settings.assignmentname_detection_string)
+                    #line = line.rstrip("NM\n")
+                    return(line)
