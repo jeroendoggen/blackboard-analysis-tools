@@ -14,13 +14,12 @@ from blackboard_analysis_tools.logger import Logger
 class Unzipper():
     """ Timer to check the speed of the tool itself (benchmarking) """
     zip_files_list = []
-    #TODO: this should go to the reporter class
-    assignment_counter = 0
     
-    def __init__(self, input_path, output_path, logger):
+    def __init__(self, input_path, output_path, logger, reporter):
         self.input_path = input_path
         self.output_path = output_path
         self.logger = logger
+        self.reporter = reporter
     
     def generate_zip_files_list(self):
         """ Generate the list with the zip files """
@@ -30,7 +29,7 @@ class Unzipper():
                 if os.path.isfile(os.path.join(self.input_path, inputfile)):
                     if inputfile.endswith(".zip"):
                         self.zip_files_list.append(inputfile)
-                        self.assignment_counter += 1
+                        self.reporter.assignment_counter += 1
         except OSError:
             self.logger.exit_program("reading the .zip files (does the output folder exist?)")
 

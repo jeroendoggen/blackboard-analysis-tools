@@ -42,9 +42,8 @@ class BlackboardAnalysisTools:
         self.settings = Settings()
         self.timing_analyser = TimingAnalyser()
         self.mylogger = Logger(self.settings.logfile)
-        self.unzipper = Unzipper(self.settings.input_path, self.settings.output_path, self.mylogger)
-        #TODO: cyclic passing of instances: analyser & reporter
-        self.reporter = Reporter(self.settings.studentlist_filename_final, self.settings.studentlist_filename_temp)
+        self.reporter = Reporter(self.settings)
+        self.unzipper = Unzipper(self.settings.input_path, self.settings.output_path, self.mylogger, self.reporter)
         self.analyser = Analyser(self.settings.input_path, self.settings.output_path, self.mylogger, self.settings, self.reporter)
         self.input_output = InputOutput(self.settings.input_path, self.settings.output_path, self.mylogger, self.settings, self.reporter, self.analyser)
 
@@ -56,7 +55,7 @@ class BlackboardAnalysisTools:
         self.analyser.analyse_txt_files()
         self.input_output.run()
         #TODO does not work because of cyclic passing of instances
-        self.reporter.write_statistics()
+        self.reporter.write_statistics(self.analyser.studentnames_list)
         self.input_output.cleanup()
 
     def exit_value(self):

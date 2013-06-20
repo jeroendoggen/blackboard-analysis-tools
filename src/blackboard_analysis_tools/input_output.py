@@ -67,10 +67,10 @@ class InputOutput():
             studentname = self.analyser.get_studentname(txtfile)
             filename = self.analyser.get_filename(txtfile)
             if filename is not None:
-                assignment = self.get_assignment(txtfile)
-                self.bad_filenames_counter += 1
-                self.bad_filenames += " - " + str(studentname) + ": "
-                self.bad_filenames += str(filename) + " --> in assignment: " + assignment
+                assignment = self.analyser.get_assignment(txtfile)
+                self.reporter.bad_filenames_counter += 1
+                self.reporter.bad_filenames += " - " + str(studentname) + ": "
+                self.reporter.bad_filenames += str(filename) + " --> in assignment: " + assignment
                 shutil.copy2(filename, self.output_path + studentname)
 
     def swap_string(self, string):
