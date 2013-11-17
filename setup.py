@@ -1,4 +1,4 @@
-"""Setup file for sp
+"""Setup file for "Blackboard Analysis Tools"
 
 Define the options for the "blackboard_analysis_tools" package
 Create source Python packages (python setup.py sdist)

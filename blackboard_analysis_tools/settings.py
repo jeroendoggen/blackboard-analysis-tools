@@ -1,6 +1,5 @@
 ﻿"""
-    Blackboard Grade center analyser
-    A tool to analyse assignments downloaded from the Blackboard grade center
+    Blackboard Analysis Tools
     Copyright 2013, Jeroen Doggen, jeroendoggen@gmail.com
 """
 
