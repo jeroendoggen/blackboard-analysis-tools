@@ -8,10 +8,10 @@ from __future__ import print_function, division  # We require Python 2.6+
 import os
 import shutil
 
+
 class InputOutput():
     """ Timer to check the speed of the tool itself (benchmarking) """
 
-    
     def __init__(self, input_path, output_path, logger, settings, reporter, analyser):
         self.input_path = input_path
         self.output_path = output_path
@@ -25,7 +25,7 @@ class InputOutput():
         self.create_student_folders()
         self.move_student_files()
         self.process_badly_named_files()
-        
+
     def create_student_folders(self):
         """ Create the needed student folders """
         for student in self.analyser.studentnames_list:
@@ -41,10 +41,10 @@ class InputOutput():
                     self.move_files(inputfile)
         except OSError:
             self.exit_program("moving student files to output folder")
-            
+
     def move_files(self, inputfile):
         """ Move assignment file to the correct student folder """
-        #print(inputfile)        
+        #print(inputfile)
         for student in self.analyser.studentnames_list:
             #print(student)
             if '.' in student:
@@ -79,7 +79,7 @@ class InputOutput():
         string1 = string.split(".")[1]
         string = string1 + "." + string0
         return(string)
-        
+
     def cleanup(self):
         """ Clean up the output folder by removing all 'temp files' """
         try:

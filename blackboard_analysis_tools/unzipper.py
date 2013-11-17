@@ -10,16 +10,17 @@ import zipfile
 
 from blackboard_analysis_tools.logger import Logger
 
+
 class Unzipper():
     """ Timer to check the speed of the tool itself (benchmarking) """
     zip_files_list = []
-    
+
     def __init__(self, input_path, output_path, logger, reporter):
         self.input_path = input_path
         self.output_path = output_path
         self.logger = logger
         self.reporter = reporter
-    
+
     def generate_zip_files_list(self):
         """ Generate the list with the zip files """
         try:
@@ -42,9 +43,9 @@ class Unzipper():
         print("")
         for index, current_file in enumerate(self.zip_files_list):
             shortname = str(counter) + ".zip"
-            self.unzip_onefile( current_file, shortname)
+            self.unzip_onefile(current_file, shortname)
             counter += 1
-  
+
     def unzip_onefile(self, current_file, shortname):
         """ Unzip one file """
         os.rename(current_file, shortname)

@@ -34,6 +34,7 @@ from blackboard_analysis_tools.analyser import Analyser
 from blackboard_analysis_tools.reporter import Reporter
 from blackboard_analysis_tools.input_output import InputOutput
 
+
 class BlackboardAnalysisTools:
     """ Contains all the tools to analyse Blackboard assignments """
 

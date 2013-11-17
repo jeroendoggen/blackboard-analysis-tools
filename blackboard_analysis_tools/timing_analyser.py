@@ -7,6 +7,7 @@ from __future__ import print_function, division  # We require Python 2.6+
 
 import datetime
 
+
 class TimingAnalyser:
     """ Timer to check the speed of the tool itself (benchmarking) """
     starttime = 0
@@ -15,7 +16,7 @@ class TimingAnalyser:
     def __init__(self):
         self.starttime = datetime.datetime.now()
         self.lasttime = datetime.datetime.now()
-        
+
     def timedebug(self, function, message):
         """Print the current runtime + a message to the terminal """
         ##TODO timing is off by one!

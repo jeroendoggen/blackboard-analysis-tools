@@ -8,6 +8,7 @@
 
 import os
 
+
 class Settings:
     """ Contains all the tools to analyse Blackboard assignments """
     logfile = "blackboard_analysis_tools.log"
@@ -20,12 +21,11 @@ class Settings:
     assignmentname_detection_string = "Opdracht:"
     filename_analysis_string = "@student.artesis.be"
     assignment_late_detection_string = "juni"
-    
+
     logfile = "blackboard_analysis_tools.log"
     studentlist_filename_temp = "studentlist_all.txt"
     studentlist_filename_final = "studentlist_final.txt"
     summary_file = 'summary.txt'
-    
 
     def __init__(self):
         pass

@@ -7,6 +7,7 @@ from __future__ import print_function, division  # We require Python 2.6+
 
 import os
 
+
 class Reporter():
     """ Logging class """
     txt_files_counter = 0
@@ -46,7 +47,7 @@ class Reporter():
                 lines_seen.add(line)
                 self.student_counter += 1
         outfile.close()
-        
+
     def write_summary(self):
         """ Write a summary of the analysis process to a logfile """
         try:

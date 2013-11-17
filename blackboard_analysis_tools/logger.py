@@ -8,10 +8,11 @@ from __future__ import print_function, division  # We require Python 2.6+
 import logging
 import sys
 
+
 class Logger():
     """ Logging class """
     logger = 0
-    
+
     def __init__(self, logfile):
         self.set_logfile(logfile)
         self.info("Starting 'analysis tool': ")
@@ -37,5 +38,3 @@ class Logger():
 
     def info(self, message):
         self.logger.info(message)
-
-        

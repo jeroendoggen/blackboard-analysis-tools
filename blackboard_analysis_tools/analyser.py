@@ -11,11 +11,12 @@ from email.utils import parseaddr
 
 from blackboard_analysis_tools.logger import Logger
 
+
 class Analyser():
     """ Timer to check the speed of the tool itself (benchmarking) """
     txt_files_list = []
     studentnames_list = []
-    
+
     def __init__(self, input_path, output_path, logger, settings, reporter):
         self.input_path = input_path
         self.output_path = output_path
@@ -49,7 +50,7 @@ class Analyser():
         """ Get the student name from a given txt file """
         for txtfile in self.txt_files_list:
             self.studentnames_list.append(self.get_studentname(txtfile))
-            
+
     def get_studentname(self, txtfile):
         """ Get the student name from a given txt file """
         studentname = ""
@@ -63,7 +64,7 @@ class Analyser():
                     #print(email)
             inputfile.close()
         return(studentname)
-        
+
     def is_not_analysistool_file(self, inputfile):
         """ Detect is a file is a logfile, outputfile from this tool """
         if inputfile != self.settings.studentlist_filename_final:
@@ -72,14 +73,13 @@ class Analyser():
                     return(True)
         else:
             return(False)
- 
     def swap_string(self, string):
         """ Swap strings around '.' symbol (for email address processing)"""
         string0 = string.split(".")[0]
         string1 = string.split(".")[1]
         string = string1 + "." + string0
         return(string)
-        
+
     def detect_late_assignments(self):
         """ Detect is an assignment is handed in late from a given .txt file """
         for txtfile in self.txt_files_list:
