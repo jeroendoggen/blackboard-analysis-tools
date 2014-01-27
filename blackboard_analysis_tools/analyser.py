@@ -59,7 +59,9 @@ class Analyser():
                 if self.settings.name_detection_string in line:
                     studentname = parseaddr(line)[0]
                     #print(email)
+                    #print(studentname)
                     studentname = studentname[:-self.settings.email_domain_length]
+                    #print(studentname)
                     studentname = self.swap_string(studentname)
                     #print(email)
             inputfile.close()
@@ -75,9 +77,13 @@ class Analyser():
             return(False)
     def swap_string(self, string):
         """ Swap strings around '.' symbol (for email address processing)"""
+        #print(string)
         string0 = string.split(".")[0]
+        #print(string0)
         string1 = string.split(".")[1]
+        #print(string1)
         string = string1 + "." + string0
+        #print(string)
         return(string)
 
     def detect_late_assignments(self):

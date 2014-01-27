@@ -16,10 +16,10 @@ class Settings:
     input_path = script_path + "/input/"
     output_path = script_path + "/output/"
     name_detection_string = "Naam:"
-    email_domain_length = 23
+    email_domain_length = 5
     filename_detection_string = "Bestandsnaam:"
     assignmentname_detection_string = "Opdracht:"
-    filename_analysis_string = "@student.artesis.be"
+    filename_analysis_string = "@student.ap.be"
     assignment_late_detection_string = "juni"
 
     logfile = "blackboard_analysis_tools.log"
