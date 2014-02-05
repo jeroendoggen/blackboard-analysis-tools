@@ -1,5 +1,5 @@
 # Blackboard Analysis Tool
-An analysis automation tool to avoid repetitive task while grading student assignments that have been handed in through the Blackboard learning system.
+An analysis automation tool to avoid repetitive tasks while grading student assignments that have been handed in through the Blackboard learning system.
 
 For example:
  * Extract hundreds of .zip files
