@@ -19,7 +19,7 @@ class Settings:
     email_domain_length = 5
     filename_detection_string = "Bestandsnaam:"
     assignmentname_detection_string = "Opdracht:"
-    filename_analysis_string = "@student.ap.be"
+    filename_analysis_string = "s.ap"
     assignment_late_detection_string = "juni"
 
     logfile = "blackboard_analysis_tools.log"

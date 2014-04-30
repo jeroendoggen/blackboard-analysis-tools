@@ -51,4 +51,5 @@ class Unzipper():
         os.rename(current_file, shortname)
         myzip = zipfile.ZipFile(shortname)
         myzip.extractall(self.output_path)
+        myzip.close()
         os.rename(shortname, current_file)

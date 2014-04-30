@@ -95,10 +95,10 @@ class Analyser():
                         self.reporter.late_assignment_counter += 1
                         print("Late file: ", end="")
                         print(inputfile.name)
-                        print(line)
+                        #print(line)
                         line = line.lstrip(self.assignmentname_detection_string)
                         #line = line.rstrip("NM\n")
-                        print(line)
+                        #print(line)
                         #TODO: this should return something and go to the report (was not available in previous version)
 
     def get_filename(self, txtfile):
