@@ -14,12 +14,12 @@ For example:
  * Open the "output" folder to see the results (all files sorted per student, a summary, logfile, ...).
 
 ## Installation:
- * Download the source and run ``python setup.py install``.
+ * Install using pip: ``pip install blackboard_analysis_tools``. (Linux & Windows)
  * Python Package available in the Python Package Index at: http://pypi.python.org/pypi/blackboard_analysis_tools/.
- * Install using pip: ``pip install blackboard_analysis_tools``.
+ * Download the source and run ``python setup.py install``.
 
 ## Limitations:
- * Currently only tested on Linux.
+ * Currently only tested on Linux & Windows7
  * The program was created with other OS users in mind, so it will eventually get full cross-platform support.
 
 ## License:
@@ -40,6 +40,10 @@ See LICENSE in the distribution for details.
  8. Write a summary of the process: number of students, number of assignments, number of 'mangled' files,...
 
 ## Changelog:
+0.0.4:
+ * Windows compatible
+ * Modified the default analysis options to 'AP University College'
+
 0.0.3:
  * Cleanup temp folders
  * Debug code for timing analysis
