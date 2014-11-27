@@ -87,6 +87,7 @@ class Analyser():
 
     def detect_late_assignments(self):
         """ Detect is an assignment is handed in late from a given .txt file """
+        thelist = []
         for txtfile in self.txt_files_list:
             with open(txtfile, 'r') as inputfile:
                 for line in inputfile:
@@ -94,9 +95,14 @@ class Analyser():
                         #self.reporter.late_assignment_counter += 1
                         line = line[14:]
                         line = line[:-2]
-                        print(line, end=" --> ")
-                        print(inputfile.name)
+                        output = line + " --> " + inputfile.name
+                        #print(output)
+                        thelist.append(output)
                         #TODO: this should return something and go to the report (was not available in previous version)
+        thelist = sorted(thelist)
+        for element in thelist:
+            print(element)
+
 
     def get_filename(self, txtfile):
         """ Get the assignment filename from a given txt file """
