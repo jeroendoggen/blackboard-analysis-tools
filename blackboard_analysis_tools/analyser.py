@@ -6,6 +6,7 @@
 from __future__ import print_function, division  # We require Python 2.6+
 
 import os
+import time
 
 from email.utils import parseaddr
 
@@ -58,12 +59,10 @@ class Analyser():
             for line in inputfile:
                 if self.settings.name_detection_string in line:
                     studentname = parseaddr(line)[0]
-                    #print(email)
-                    #print(studentname)
                     studentname = studentname[:-self.settings.email_domain_length]
+                    if studentname is not "":
+                        studentname = self.swap_string(studentname)
                     #print(studentname)
-                    studentname = self.swap_string(studentname)
-                    #print(email)
             inputfile.close()
         return(studentname)
 
@@ -92,13 +91,11 @@ class Analyser():
             with open(txtfile, 'r') as inputfile:
                 for line in inputfile:
                     if self.settings.assignment_late_detection_string in line:
-                        self.reporter.late_assignment_counter += 1
-                        print("Late file: ", end="")
+                        #self.reporter.late_assignment_counter += 1
+                        line = line[14:]
+                        line = line[:-2]
+                        print(line, end=" --> ")
                         print(inputfile.name)
-                        #print(line)
-                        line = line.lstrip(self.assignmentname_detection_string)
-                        #line = line.rstrip("NM\n")
-                        #print(line)
                         #TODO: this should return something and go to the report (was not available in previous version)
 
     def get_filename(self, txtfile):
@@ -122,3 +119,4 @@ class Analyser():
                     line = line.lstrip(self.settings.assignmentname_detection_string)
                     #line = line.rstrip("NM\n")
                     return(line)
+

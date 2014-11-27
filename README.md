@@ -13,14 +13,31 @@ For example:
  * Wait... (about 10 seconds when processing around 100MB of assignments) (time will vary).
  * Open the "output" folder to see the results (all files sorted per student, a summary, logfile, ...).
 
-## Installation:
- * Install using pip: ``pip install blackboard_analysis_tools``. (Linux & Windows)
- * Python Package available in the Python Package Index at: http://pypi.python.org/pypi/blackboard_analysis_tools/.
- * Download the source and run ``python setup.py install``.
+## Installation on Windows:
+ 1. Install Python:
+  * Windows: go to "Python.org", download and install the latest version
+ 2. Install "blackboard_analysis_tools" using the Python package manager
+  * Open a console window and go to the place where Python-pip is installed: normally "c:\Python34\Scripts"
+  * Run: ``pip install blackboard_analysis_tools``
+
+## Installation on Linux:
+ * Install Python (``aptitude install python`` on Debian)
+ * Run: ``pip install blackboard_analysis_tools``
+
+## Manual install:
+ * Download the source package from Github or the Python Package Index at: http://pypi.python.org/pypi/blackboard_analysis_tools/
+ * run ``python setup.py install``
+
+## Usage
+ * Create two folders: "input" and "output"
+ * Place the .zip files that you downloaded from Blackboard in the input folder
+ * Run the tool: ``python -m blackboard_analysis_tools``
+ * Wait for a couple of seconds
+ * Check the output folder for all the student assignments
 
 ## Limitations:
- * Currently only tested on Linux & Windows7
- * The program was created with other OS users in mind, so it will eventually get full cross-platform support.
+ * Currently only tested on Linux, Windows 7 & Windows 8
+ * The program was created with other OS users in mind, so it will probably work on most recent operating systems where Python runs.
 
 ## License:
 If not stated otherwise blackboard_analysis_tools is distributed in terms of the MIT license.

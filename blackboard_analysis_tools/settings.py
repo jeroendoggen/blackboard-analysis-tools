@@ -20,7 +20,7 @@ class Settings:
     filename_detection_string = "Bestandsnaam:"
     assignmentname_detection_string = "Opdracht:"
     filename_analysis_string = "s.ap"
-    assignment_late_detection_string = "juni"
+    assignment_late_detection_string = "Verzenddatum:"
 
     logfile = "blackboard_analysis_tools.log"
     studentlist_filename_temp = "studentlist_all.txt"
